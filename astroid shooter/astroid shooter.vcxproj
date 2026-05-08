@@ -137,11 +137,13 @@
     <ClCompile Include="FileName.cpp" />
     <ClCompile Include="GameObject..cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ScoreManger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="ScoreManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
