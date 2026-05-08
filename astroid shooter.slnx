@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="astroid shooter/astroid shooter.vcxproj" />
+  <Project Path="astroid shooter/astroid shooter.vcxproj" Id="eb80bbda-9b96-4a28-8aba-12fad4bfe28c" />
 </Solution>
