@@ -54,3 +54,64 @@ void Player::update(float dt) {
 void Player::draw(RenderWindow& window) {
     window.draw(sprite); // just drwa it on screen
 }
+void Player::shoot() {
+
+    float angle = sprite.getRotation().asRadians();
+
+    Vector2f direction(
+        cos(angle),
+        sin(angle)
+    );
+
+    bullets.push_back(
+        Bullet(position, direction)
+    );
+}
+
+// UPDATE BULLETS
+void Player::updateBullets(float dt) {
+
+    for (auto& bullet : bullets) {
+        bullet.update(dt);
+    }
+
+    // remove inactive bullets
+    bullets.erase(
+        remove_if(
+            bullets.begin(),
+            bullets.end(),
+
+            [](Bullet& b) {
+                return !b.isActive();
+            }
+
+        ),
+        bullets.end()
+    );
+}
+// to draw our bullets comming from the player
+void Player::drawBullets(RenderWindow& window) {
+
+    for (auto& bullet : bullets) {
+        bullet.draw(window);
+    }
+}
+//adjust player heath after we take damage
+void Player::takeDamage(int amount) {
+    health -= amount;
+
+    if (health < 0)
+        health = 0;
+}
+//return the health of player
+int Player::getHealth() {
+    return health;
+}
+//give the health of the player
+Vector2f Player::getPosition() {
+    return position;
+}
+// GET BULLETS
+vector<Bullet>& Player::getBullets() {
+    return bullets;
+}

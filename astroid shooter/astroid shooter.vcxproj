@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="FileName.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject..cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ScoreManger.cpp" />
