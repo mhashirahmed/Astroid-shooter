@@ -2,6 +2,8 @@ level2test
 12600
  
 11500
+pookie
+9700
 Hamza
 7000
 lets go
@@ -16,5 +18,3 @@ abdullah
 3800
 phstral
 3400
-meow mewo
-3200

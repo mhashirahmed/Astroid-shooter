@@ -491,7 +491,7 @@ void GameManager::drawGameOver() {
 void GameManager::drawEnemyArrows() {
     const float screenW = 800.f;
     const float screenH = 600.f;
-    const float margin = 20.f;   // how close to edge the arrow sits
+    const float margin = 20.f;
     const float arrowSize = 12.f;
 
     sf::Vector2f playerPos = player.getPosition();
@@ -500,38 +500,48 @@ void GameManager::drawEnemyArrows() {
         if (!enemies[i] || !enemies[i]->getIsAlive()) continue;
 
         sf::Vector2f ePos = enemies[i]->getPosition();
-
-        // only show arrow if enemy is off screen
         bool onScreen = ePos.x >= 0 && ePos.x <= screenW &&
             ePos.y >= 0 && ePos.y <= screenH;
-        if (onScreen) continue;
 
-        // direction from player to enemy
+        sf::ConvexShape arrow;
+        arrow.setPointCount(3);
+        arrow.setPoint(0, sf::Vector2f(arrowSize, 0));
+        arrow.setPoint(1, sf::Vector2f(-arrowSize, -arrowSize * 0.6f));
+        arrow.setPoint(2, sf::Vector2f(-arrowSize, arrowSize * 0.6f));
+        arrow.setFillColor(sf::Color(255, 60, 60, 200));
+        arrow.setOutlineColor(sf::Color::White);
+        arrow.setOutlineThickness(1.f);
+
+        if (onScreen) {
+            // enemy onscreen 
+            arrow.setPosition(sf::Vector2f(ePos.x, ePos.y - 40.f));
+            arrow.setRotation(sf::degrees(270.f));
+            window.draw(arrow);
+            continue;
+        }
+
+        // offscreen
         sf::Vector2f dir = ePos - playerPos;
         float len = sqrt(dir.x * dir.x + dir.y * dir.y);
         if (len == 0) continue;
         dir.x /= len;
         dir.y /= len;
 
-        // clamp to screen edge with margin
+        
         float cx = screenW / 2.f;
         float cy = screenH / 2.f;
-        float tx = cx + dir.x * 10000.f;
-        float ty = cy + dir.y * 10000.f;
-
-        // find intersection with screen boundary
         float ax = cx, ay = cy;
-        float scales[4];
-        scales[0] = (margin - cx) / (tx - cx); // left
-        scales[1] = (screenW - margin - cx) / (tx - cx); // right
-        scales[2] = (margin - cy) / (ty - cy); // top
-        scales[3] = (screenH - margin - cy) / (ty - cy); // bottom
-
+        float scales[4] = {
+            (margin - cx) / (cx + dir.x * 10000.f - cx), 
+            (screenW - margin - cx) / (cx + dir.x * 10000.f - cx),
+            (margin - cy) / (cy + dir.y * 10000.f - cy), 
+            (screenH - margin - cy) / (cy + dir.y * 10000.f - cy)  
+        };
         float best = 1.f;
         for (int s = 0; s < 4; s++) {
             if (scales[s] > 0 && scales[s] < best) {
-                float px2 = cx + scales[s] * (tx - cx);
-                float py2 = cy + scales[s] * (ty - cy);
+                float px2 = cx + scales[s] * dir.x * 10000.f;
+                float py2 = cy + scales[s] * dir.y * 10000.f;
                 if (px2 >= margin && px2 <= screenW - margin &&
                     py2 >= margin && py2 <= screenH - margin) {
                     best = scales[s];
@@ -541,24 +551,12 @@ void GameManager::drawEnemyArrows() {
             }
         }
 
-        // angle of arrow
-        float angle = atan2(dir.y, dir.x);
-
-        // draw triangle arrow
-        sf::ConvexShape arrow;
-        arrow.setPointCount(3);
-        arrow.setPoint(0, sf::Vector2f(arrowSize, 0));
-        arrow.setPoint(1, sf::Vector2f(-arrowSize, -arrowSize * 0.6f));
-        arrow.setPoint(2, sf::Vector2f(-arrowSize, arrowSize * 0.6f));
-        arrow.setFillColor(sf::Color(255, 60, 60, 200));
-        arrow.setOutlineColor(sf::Color::White);
-        arrow.setOutlineThickness(1.f);
+       
         arrow.setPosition(sf::Vector2f(ax, ay));
-        arrow.setRotation(sf::degrees(angle * 180.f / 3.14159f));
+        arrow.setRotation(sf::degrees(atan2(dir.y, dir.x) * 180.f / 3.14159f));
         window.draw(arrow);
     }
 }
-
 GameManager::~GameManager() {
     delete menuTitle;
     delete menuStart;
@@ -566,5 +564,5 @@ GameManager::~GameManager() {
     delete menuExit;
     delete pauseText;
     delete gameOverText;
-    delete levelText; // destructor so no dangling pointers
+    delete levelText; 
 }

@@ -34,13 +34,13 @@ void Bullet::draw(RenderWindow& window) {
 	window.draw(*sprite); // again we just draw if its active
 }
 bool Bullet::isActive() const { 
-	return active; // simple getter
+	return active; 
 }
 void Bullet::deactivate() {
-	active = false; // simple setter 
+	active = false; 
 }
 float Bullet::getDamage() const { 
-	return damage; // simple setter
+	return damage; 
 }
 FloatRect Bullet::getBounds() const {
 	return sprite->getGlobalBounds(); // form our game object class

@@ -54,8 +54,8 @@ void PowerUp::apply()
 {
     if (type == PowerUpType::SHIELD)
     {
-        // player becomes protected from damage
-        // will connect to Player class later
+        // player take shild
+        
     }
     else if (type == PowerUpType::RAPID_FIRE)
     {
