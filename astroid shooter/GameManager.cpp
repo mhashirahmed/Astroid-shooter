@@ -3,7 +3,7 @@
 #include <ctime>
 #include <string>
 GameManager::GameManager()
-    : window(VideoMode({ 800, 600 }), "Asteroid Shooter") {
+    : window(VideoMode({ 800, 600 }), "Asteroid Shooter"){
     srand(time(0));  // time random for asteroid spawning
     state = GameState::MainMenu;
     currentLevel = 1;
@@ -21,45 +21,27 @@ GameManager::GameManager()
     font.openFromFile("assets/font.ttf"); // loads the font
 
     // setup menu text
-    menuTitle.setFont(font);
-    menuTitle.setString("ASTEROID SHOOTER");
-    menuTitle.setCharacterSize(48);
-    menuTitle.setFillColor(Color::Yellow);
-    menuTitle.setPosition(Vector2f(170.f, 100.f));
+    menuTitle = new Text(font, "ASTEROID SHOOTER", 48);
+    menuStart = new Text(font, "Press ENTER to Play", 28);
+    menuLeaderboard = new Text(font, "Press L for Leaderboard", 24);
+    menuExit = new Text(font, "Press ESC to Exit", 24);
+    pauseText = new Text(font, "PAUSED\nPress P to Resume\nPress M for Menu", 32);
+    gameOverText = new Text(font, "GAME OVER\nPress ENTER to Play Again\nPress M for Menu", 32);
+    levelText = new Text(font, "", 24);
 
-    menuStart.setFont(font);
-    menuStart.setString("Press ENTER to Play");
-    menuStart.setCharacterSize(28);
-    menuStart.setFillColor(Color::White);
-    menuStart.setPosition(Vector2f(270.f, 250.f));
-
-    menuLeaderboard.setFont(font);
-    menuLeaderboard.setString("Press L for Leaderboard");
-    menuLeaderboard.setCharacterSize(24);
-    menuLeaderboard.setFillColor(Color::White);
-    menuLeaderboard.setPosition(Vector2f(260.f, 310.f));
-
-    menuExit.setFont(font);
-    menuExit.setString("Press ESC to Exit");
-    menuExit.setCharacterSize(24);
-    menuExit.setFillColor(Color::White);
-    menuExit.setPosition(Vector2f(300.f, 370.f));
-
-    pauseText.setFont(font);
-    pauseText.setString("PAUSED\nPress P to Resume\nPress M for Menu");
-    pauseText.setCharacterSize(32);
-    pauseText.setFillColor(Color::White);
-    pauseText.setPosition(Vector2f(280.f, 220.f));
-
-    gameOverText.setFont(font);
-    gameOverText.setString("GAME OVER\nPress ENTER to Play Again\nPress M for Menu");
-    gameOverText.setCharacterSize(32);
-    gameOverText.setFillColor(Color::Red);
-    gameOverText.setPosition(Vector2f(230.f, 200.f));
-
-    levelText.setFont(font);
-    levelText.setCharacterSize(24);
-    levelText.setFillColor(Color::White);
+    menuTitle->setFillColor(Color::Yellow);
+    menuTitle->setPosition(Vector2f(170.f, 100.f));
+    menuStart->setFillColor(Color::White);
+    menuStart->setPosition(Vector2f(270.f, 250.f));
+    menuLeaderboard->setFillColor(Color::White);
+    menuLeaderboard->setPosition(Vector2f(260.f, 310.f));
+    menuExit->setFillColor(Color::White);
+    menuExit->setPosition(Vector2f(300.f, 370.f));
+    pauseText->setFillColor(Color::White);
+    pauseText->setPosition(Vector2f(280.f, 220.f));
+    gameOverText->setFillColor(Color::Red);
+    gameOverText->setPosition(Vector2f(230.f, 200.f));
+    levelText->setFillColor(Color::White);
     // this we set all the text for menues
 }
 
@@ -363,22 +345,31 @@ void GameManager::drawHUD() {
     window.draw(lvlText);
 }
 void GameManager::drawMainMenu() {
-    window.draw(menuTitle);
-    window.draw(menuStart);
-    window.draw(menuLeaderboard);
-    window.draw(menuExit);
+    window.draw(*menuTitle);
+    window.draw(*menuStart);
+    window.draw(*menuLeaderboard);
+    window.draw(*menuExit);
 }
 void GameManager::drawPauseMenu() {
     // draw game in background
     for (int i = 0; i < asteroidCount; i++)
         if (asteroids[i]) asteroids[i]->draw(window);
     player.draw(window);
-    window.draw(pauseText);
+    window.draw(*pauseText);
 }
 void GameManager::drawGameOver() {
     Text finalScore(font, "Final Score: " + to_string(scoreManager.getCurrentScore()), 28);
     finalScore.setFillColor(Color::Yellow);
     finalScore.setPosition(Vector2f(280.f, 420.f));
-    window.draw(gameOverText);
+    window.draw(*gameOverText);
     window.draw(finalScore);
+}
+GameManager::~GameManager() {
+    delete menuTitle;
+    delete menuStart;
+    delete menuLeaderboard;
+    delete menuExit;
+    delete pauseText;
+    delete gameOverText;
+    delete levelText; // destructor so no dangling pointers
 }

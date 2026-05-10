@@ -17,5 +17,5 @@ public:
 	void takeDamage(int amount);
 	int getHealth();
 	Vector2f getPosition();
-	vector<Bullet>& getBullets()
+	vector<Bullet>& getBullets();
 };

@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Bullet.h"
 #include <cmath> // Needed later for sin() and cos()
 
 // constructor for player
@@ -19,7 +20,7 @@ Player::Player() {
 
 // the actual physics part
 void Player::update(float dt) {
-    // 1. Write an 'if' statement checking the Left or A key.
+    //an 'if' statement checking the Left or A key.
     //    If pressed, rotate the sprite negatively using dt.
     if (Keyboard::isKeyPressed(Keyboard::Key::A) || Keyboard::isKeyPressed(Keyboard::Key::Left)) {
         sprite.rotate(degrees(-rotation * dt)); // in sfml 3 roatin must be in degrees
@@ -58,14 +59,9 @@ void Player::shoot() {
 
     float angle = sprite.getRotation().asRadians();
 
-    Vector2f direction(
-        cos(angle),
-        sin(angle)
-    );
+    Vector2f direction(cos(angle),sin(angle));
 
-    bullets.push_back(
-        Bullet(position, direction)
-    );
+    bullets.push_back(Bullet(position.x, position.y, angle));
 }
 
 // UPDATE BULLETS

@@ -33,13 +33,13 @@ class GameManager {
     int powerupCount;
     // menu UI
     Font font;
-    Text menuTitle;
-    Text menuStart;
-    Text menuLeaderboard;
-    Text menuExit;
-    Text pauseText;
-    Text gameOverText;
-    Text levelText;
+    Text* menuTitle = nullptr; // cuz text has no default ctr we are gonna make pointers first
+    Text* menuStart = nullptr;
+    Text* menuLeaderboard = nullptr;
+    Text* menuExit = nullptr;
+    Text* pauseText = nullptr;
+    Text* gameOverText = nullptr;
+    Text* levelText = nullptr;
     // private methods
     void processEvents();
     void update(float dt);
