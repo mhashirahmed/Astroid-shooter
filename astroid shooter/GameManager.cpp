@@ -3,7 +3,7 @@
 #include <ctime>
 #include <string>
 GameManager::GameManager()
-    : window(VideoMode({ 800, 600 }), "Asteroid Shooter"){
+    : window(VideoMode({ 800, 600 }), "Asteroid Shooter") {
     srand(time(0));  // time random for asteroid spawning
     state = GameState::MainMenu;
     currentLevel = 1;
@@ -12,11 +12,11 @@ GameManager::GameManager()
     powerupCount = 0; // seting all to zero intially
 
     // initilaise with zero
-    for (int i = 0; i < 50; i++) 
+    for (int i = 0; i < 50; i++)
         asteroids[i] = nullptr;
-    for (int i = 0; i < 10; i++) 
+    for (int i = 0; i < 10; i++)
         enemies[i] = nullptr;
-    for (int i = 0; i < 5; i++) 
+    for (int i = 0; i < 5; i++)
         powerups[i] = nullptr;
     font.openFromFile("assets/font.ttf"); // loads the font
 
@@ -53,7 +53,7 @@ void GameManager::run() {
     while (window.isOpen()) {
         float dt = clock.restart().asSeconds();
         // cap dt so game doesnt go crazy if window is dragged
-        if (dt > 0.1f) 
+        if (dt > 0.1f)
             dt = 0.1f;
         processEvents();
         update(dt);
@@ -61,13 +61,13 @@ void GameManager::run() {
     }
     // cleanup all dynamic memory before exit
     for (int i = 0; i < 50; i++)
-        if (asteroids[i]) 
+        if (asteroids[i])
             delete asteroids[i];
     for (int i = 0; i < 10; i++)
         if (enemies[i])
             delete enemies[i];
     for (int i = 0; i < 5; i++)
-        if (powerups[i])  
+        if (powerups[i])
             delete powerups[i];
 }
 void GameManager::processEvents() {
@@ -102,7 +102,7 @@ void GameManager::processEvents() {
                 if (key == Keyboard::Key::F9) {
                     if (saveSystem.saveExists()) {
                         resetGame(); // clear old state first
-                        saveSystem.loadGame(player, currentLevel);
+                        saveSystem.loadGame(player, currentLevel, enemies, enemyCount);
                         spawnAsteroids(3 + (currentLevel * 2)); // spawn asteroids for loaded level
                         state = GameState::Playing;
                     }
@@ -122,12 +122,12 @@ void GameManager::processEvents() {
                 if (key == Keyboard::Key::Space)
                     player.shoot();
                 if (key == Keyboard::Key::F5) {
-                    saveSystem.saveGame(player, currentLevel); // F5 saves
+                    saveSystem.saveGame(player, currentLevel, enemies, enemyCount);
                     cout << "Game Saved!" << endl;
                 }
                 if (key == Keyboard::Key::F9) {
                     if (saveSystem.saveExists()) {
-                        saveSystem.loadGame(player, currentLevel); // F9 loads mid game
+                        saveSystem.loadGame(player, currentLevel, enemies, enemyCount);
                         cout << "Game Loaded!" << endl;
                     }
                     else {
@@ -142,7 +142,7 @@ void GameManager::processEvents() {
                 if (key == Keyboard::Key::M)
                     state = GameState::MainMenu;
                 if (key == Keyboard::Key::F5) {
-                    saveSystem.saveGame(player, currentLevel); // save from pause too
+                    saveSystem.saveGame(player, currentLevel, enemies, enemyCount);
                     cout << "Game Saved!" << endl;
                 }
             }
@@ -305,9 +305,9 @@ void GameManager::startLevel(int level) {
     if (count > 15) count = 15;
     spawnAsteroids(count);
     // enemies start spawning from level 2
-    if (level >= 2) 
+    if (level >= 2)
         spawnEnemy();
-    if (level >= 4) 
+    if (level >= 4)
         spawnEnemy();  // two enemies from level 4
 }
 void GameManager::spawnAsteroids(int count) {
@@ -387,13 +387,13 @@ void GameManager::cleanupPowerups() {
 // our draw function that calls all draw functions
 void GameManager::draw() {
     window.clear(Color::Black);
-    if (state == GameState::MainMenu)      
+    if (state == GameState::MainMenu)
         drawMainMenu();
     else if (state == GameState::Leaderboard)
         scoreManager.draw(window);
-    else if (state == GameState::Paused)   
+    else if (state == GameState::Paused)
         drawPauseMenu();
-    else if (state == GameState::GameOver)  
+    else if (state == GameState::GameOver)
         drawGameOver();
     else if (state == GameState::Playing) {
         // draw all game objects
@@ -409,6 +409,7 @@ void GameManager::draw() {
         }
         player.draw(window);
         player.drawBullets(window);
+        drawEnemyArrows();
         drawHUD();
     }
     window.display();
@@ -487,6 +488,77 @@ void GameManager::drawGameOver() {
         window.draw(restart);
     }
 }
+void GameManager::drawEnemyArrows() {
+    const float screenW = 800.f;
+    const float screenH = 600.f;
+    const float margin = 20.f;   // how close to edge the arrow sits
+    const float arrowSize = 12.f;
+
+    sf::Vector2f playerPos = player.getPosition();
+
+    for (int i = 0; i < enemyCount; i++) {
+        if (!enemies[i] || !enemies[i]->getIsAlive()) continue;
+
+        sf::Vector2f ePos = enemies[i]->getPosition();
+
+        // only show arrow if enemy is off screen
+        bool onScreen = ePos.x >= 0 && ePos.x <= screenW &&
+            ePos.y >= 0 && ePos.y <= screenH;
+        if (onScreen) continue;
+
+        // direction from player to enemy
+        sf::Vector2f dir = ePos - playerPos;
+        float len = sqrt(dir.x * dir.x + dir.y * dir.y);
+        if (len == 0) continue;
+        dir.x /= len;
+        dir.y /= len;
+
+        // clamp to screen edge with margin
+        float cx = screenW / 2.f;
+        float cy = screenH / 2.f;
+        float tx = cx + dir.x * 10000.f;
+        float ty = cy + dir.y * 10000.f;
+
+        // find intersection with screen boundary
+        float ax = cx, ay = cy;
+        float scales[4];
+        scales[0] = (margin - cx) / (tx - cx); // left
+        scales[1] = (screenW - margin - cx) / (tx - cx); // right
+        scales[2] = (margin - cy) / (ty - cy); // top
+        scales[3] = (screenH - margin - cy) / (ty - cy); // bottom
+
+        float best = 1.f;
+        for (int s = 0; s < 4; s++) {
+            if (scales[s] > 0 && scales[s] < best) {
+                float px2 = cx + scales[s] * (tx - cx);
+                float py2 = cy + scales[s] * (ty - cy);
+                if (px2 >= margin && px2 <= screenW - margin &&
+                    py2 >= margin && py2 <= screenH - margin) {
+                    best = scales[s];
+                    ax = px2;
+                    ay = py2;
+                }
+            }
+        }
+
+        // angle of arrow
+        float angle = atan2(dir.y, dir.x);
+
+        // draw triangle arrow
+        sf::ConvexShape arrow;
+        arrow.setPointCount(3);
+        arrow.setPoint(0, sf::Vector2f(arrowSize, 0));
+        arrow.setPoint(1, sf::Vector2f(-arrowSize, -arrowSize * 0.6f));
+        arrow.setPoint(2, sf::Vector2f(-arrowSize, arrowSize * 0.6f));
+        arrow.setFillColor(sf::Color(255, 60, 60, 200));
+        arrow.setOutlineColor(sf::Color::White);
+        arrow.setOutlineThickness(1.f);
+        arrow.setPosition(sf::Vector2f(ax, ay));
+        arrow.setRotation(sf::degrees(angle * 180.f / 3.14159f));
+        window.draw(arrow);
+    }
+}
+
 GameManager::~GameManager() {
     delete menuTitle;
     delete menuStart;

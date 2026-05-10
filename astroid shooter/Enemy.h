@@ -18,5 +18,7 @@ public:
     void takeDamage(int damage);
     bool getIsAlive();
     int getHp();
+    void setHp(int h);
+    sf::Vector2f getPosition();
     virtual void shoot(sf::Vector2f playerPosition);
 };

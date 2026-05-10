@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Bullet.h"
@@ -16,56 +17,49 @@ enum class GameState {
     Leaderboard
 };
 class GameManager {
-    // core SFML
     RenderWindow window;
     Clock clock;
-    // game state
     GameState state;
     int currentLevel;
-    // game objects
     Player player;
     ScoreManager scoreManager;
-    // dynamic arrays for objects that spawn/despawn
-    Asteroid* asteroids[50];   // max 50 asteroids at once
-    EnemyShip* enemies[10];    // max 10 enemies at once
-    PowerUp* powerups[5];      // max 5 powerups at once
+    Asteroid* asteroids[50];
+    EnemyShip* enemies[10];
+    PowerUp* powerups[5];
     int asteroidCount;
     int enemyCount;
     int powerupCount;
-    // menu UI
     Font font;
-    Text* menuTitle = nullptr; // cuz text has no default ctr we are gonna make pointers first
+    Text* menuTitle = nullptr;
     Text* menuStart = nullptr;
     Text* menuLeaderboard = nullptr;
     Text* menuExit = nullptr;
     Text* pauseText = nullptr;
     Text* gameOverText = nullptr;
     Text* levelText = nullptr;
-    // private methods
     void processEvents();
     void update(float dt);
-    void draw(); //the draw that combines many
-    void spawnAsteroids(int count);//spawns asteroids for a level
-    void spawnEnemy();// spawns one enemy ship
-    void spawnPowerup();//random chance to spawn powerup
-    void checkCollisions();//checks all bullet/asteroid/enemy hits
-    void checkLevelComplete();//moves to next level if all asteroids gone
-    void startLevel(int level);//sets up a level
-    void resetGame();//resets everything for new game
-    void drawHUD();//draws score/health/level all 
-    void drawMainMenu(); //self explainotry
+    void draw();
+    void spawnAsteroids(int count);
+    void spawnEnemy();
+    void spawnPowerup();
+    void checkCollisions();
+    void checkLevelComplete();
+    void startLevel(int level);
+    void resetGame();
+    void drawHUD();
+    void drawMainMenu();
     void drawPauseMenu();
     void drawGameOver();
-    void cleanupAsteroids();// removes dead asteroids from array
-    void cleanupEnemies();// removes dead enemies from array
-    void cleanupPowerups();// removes collected powerups
-
+    void cleanupAsteroids();
+    void cleanupEnemies();
+    void cleanupPowerups();
+    void drawEnemyArrows();
     string playerName;
-    bool enteringName; // for name in leaderboard
-    SaveSystem saveSystem; // palyers save
+    bool enteringName;
+    SaveSystem saveSystem;
 public:
     GameManager();
-    void run();  // starts the game loop
+    void run();
     ~GameManager();
-
-}; 
+};

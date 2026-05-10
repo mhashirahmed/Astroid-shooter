@@ -70,7 +70,20 @@ int Enemy::getHp()
     return hp;
 }
 
+void Enemy::setHp(int h)
+{
+    hp = h;
+    if (hp > 0)
+        isAlive = true;
+}
+
+
+sf::Vector2f Enemy::getPosition()
+{
+    return sprite->getPosition();
+}
+
 void Enemy::shoot(sf::Vector2f playerPosition)
 {
-  
+
 }
