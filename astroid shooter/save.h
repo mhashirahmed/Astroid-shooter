@@ -5,19 +5,12 @@
 
 using namespace std;
 
-class SaveSystem
-{
+class SaveSystem{
 private:
-
     string filename;
-
 public:
-
     SaveSystem();
-
     void saveGame(Player& player, int level);
-
     void loadGame(Player& player, int& level);
-
     bool saveExists();
 };

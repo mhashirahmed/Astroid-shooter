@@ -23,9 +23,9 @@ Asteroid::Asteroid(int size, sf::Vector2f position) {
     float angle = (rand() % 360) * 3.14f / 180.f;
 
     float speed;
-    if (size == Large) speed = 1.0f;
-    else if (size == Medium) speed = 1.5f;
-    else speed = 2.5f;
+    if (size == Large) speed = 0.5f;
+    else if (size == Medium) speed = 0.7f;
+    else speed = 1.3f;
     velocity.x = cos(angle) * speed;
     velocity.y = sin(angle) * speed;
 }
@@ -57,17 +57,12 @@ bool Asteroid::can_split()
     return size != Small;
 }
 
-Asteroid* Asteroid::split()
-{
-    int newSize;
-    if (size == Large) newSize = Medium;
-    else newSize = Small;
-    sf::Vector2f pos = sprite->getPosition();
-    Asteroid* newAsteroids = new Asteroid[2]{
-        Asteroid(newSize, pos),
-        Asteroid(newSize, pos)
-    };
-    return newAsteroids;
+Asteroid* Asteroid::split() {
+        int newSize;
+        if (size == Large) newSize = Medium;
+        else newSize = Small;
+        sf::Vector2f pos = sprite->getPosition();
+        return new Asteroid(newSize, pos); // we dont need to ceck if it can split game maneger already foing that before calling
 }
 
 int Asteroid::getsSize()

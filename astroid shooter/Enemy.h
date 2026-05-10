@@ -1,7 +1,5 @@
 #pragma once
-#pragma once
 #include <SFML/Graphics.hpp>
-
 class Enemy {
 protected:
     int hp;
@@ -14,13 +12,11 @@ protected:
 public:
     Enemy(sf::Vector2f position, int hp, float speed);
     ~Enemy();
-
     virtual void update(sf::Vector2f playerPosition, float dt);
     virtual void draw(sf::RenderWindow& window);
-
     sf::FloatRect getBounds();
     void takeDamage(int damage);
     bool getIsAlive();
     int getHp();
-    void shoot(sf::Vector2f playerPosition);
+    virtual void shoot(sf::Vector2f playerPosition);
 };

@@ -6,6 +6,7 @@
 #include "EnemyShip.h"
 #include "PowerUp.h"
 #include "ScoreManager.h"
+#include "save.h"
 using namespace sf;
 enum class GameState {
     MainMenu,
@@ -58,8 +59,13 @@ class GameManager {
     void cleanupAsteroids();// removes dead asteroids from array
     void cleanupEnemies();// removes dead enemies from array
     void cleanupPowerups();// removes collected powerups
+
+    string playerName;
+    bool enteringName; // for name in leaderboard
+    SaveSystem saveSystem; // palyers save
 public:
     GameManager();
     void run();  // starts the game loop
+    ~GameManager();
 
 }; 

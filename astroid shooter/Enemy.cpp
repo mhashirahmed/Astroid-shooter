@@ -25,7 +25,6 @@ Enemy::~Enemy()
 void Enemy::update(sf::Vector2f playerPosition, float dt)
 {
     sf::Vector2f enemyPos = sprite->getPosition();
-
     sf::Vector2f direction = playerPosition - enemyPos;
 
     float length = sqrt(direction.x * direction.x + direction.y * direction.y);

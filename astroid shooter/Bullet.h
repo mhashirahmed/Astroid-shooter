@@ -7,7 +7,7 @@ class Bullet : public GameObject {
 	float lifetime; // how long a bullet will be activee after shooting
 	float maxlifetime; // when itll auto turn off like offscreen
 public:
-	Bullet(float startX, float startY, float angle);
+	Bullet(float startX, float startY, float moveAngle, float visualAngle,bool isEnemy = false); // visual angle since its moving and thhe texture pointing in diff ddirections
 	void update(float deltaTime) override;
 	void draw(RenderWindow& window) override;
 	bool isActive() const; // cehcks if active

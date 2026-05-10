@@ -1,91 +1,50 @@
-#include "SaveSystem.h"
-
+#include "save.h"
 #include <fstream>
 #include <iostream>
-
 using namespace std;
-
-SaveSystem::SaveSystem()
-{
+SaveSystem::SaveSystem() {
     filename = "savegame.txt";
 }
-
-bool SaveSystem::saveExists()
-{
+bool SaveSystem::saveExists() {
     ifstream file(filename);
-
     return file.good();
 }
-
-void SaveSystem::saveGame(Player& player, int level)
-{
+void SaveSystem::saveGame(Player& player, int level) {
     ofstream file(filename);
-
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         cout << "Error opening save file!\n";
         return;
     }
-
-    // save level
     file << level << endl;
-
-    // save health and score
-    file << player.health << endl;
-    file << player.score << endl;
-
-    // save position
-    file << player.position.x << endl;
-    file << player.position.y << endl;
-
-    // save velocity
-    file << player.velocity.x << endl;
-    file << player.velocity.y << endl;
-
-    // save rotation
-    file << player.sprite.getRotation().asDegrees() << endl;
-
+    file << player.getHealth() << endl;
+    file << player.getScore() << endl;
+    file << player.getPosition().x << endl;
+    file << player.getPosition().y << endl;
+    file << player.getVelocity().x << endl;
+    file << player.getVelocity().y << endl;
+    file << player.getSpriteDegrees() << endl;
     file.close();
-
-    cout << "Game Saved Successfully!\n";
+    cout << "Game Saved!\n";
 }
-
-void SaveSystem::loadGame(Player& player, int& level)
-{
+void SaveSystem::loadGame(Player& player, int& level) {
     ifstream file(filename);
-
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         cout << "No Save File Found!\n";
         return;
     }
-
-    float rotation;
-
-    // load level
+    int h, s;
+    float px, py, vx, vy, rot;
     file >> level;
-
-    // load health and score
-    file >> player.health;
-    file >> player.score;
-
-    // load position
-    file >> player.position.x;
-    file >> player.position.y;
-
-    // load velocity
-    file >> player.velocity.x;
-    file >> player.velocity.y;
-
-    // load rotation
-    file >> rotation;
-
-    // apply loaded data to sprite
-    player.sprite.setPosition(player.position);
-
-    player.sprite.setRotation(degrees(rotation));
-
+    file >> h;
+    file >> s;
+    file >> px >> py;
+    file >> vx >> vy;
+    file >> rot;
+    player.setHealth(h);
+    player.setScore(s);
+    player.setPosition(Vector2f(px, py));
+    player.setVelocity(Vector2f(vx, vy));
+    player.setSpriteDegrees(rot);
     file.close();
-
-    cout << "Game Loaded Successfully!\n";
+    cout << "Game Loaded!\n";
 }

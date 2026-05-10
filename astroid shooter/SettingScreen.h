@@ -1,15 +1,15 @@
 #pragma once
 #include "Screen.h"
-class PauseMenu : public Screen {
+class SettingsScreen : public Screen {
 private:
     sf::Font font;
-    sf::Text* pauseTitle;
-    sf::Text* resumeOption;
-    sf::Text* quitOption;
-
+    sf::Text* title;
+    sf::Text* volumeLabel;
+    sf::Text* backInstruction;
+    int volume;
 public:
-    PauseMenu();
-    ~PauseMenu();
+    SettingsScreen();
+    ~SettingsScreen();
     void handleInput(sf::RenderWindow& window, const sf::Event& event) override;
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;

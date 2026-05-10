@@ -18,7 +18,7 @@ public:
 	void draw(sf::RenderWindow& window);
 	sf::FloatRect getBounds();
 	bool can_split();
-	Asteroid* split();
+	Asteroid* split(); // returns one we have to call twice othehrwise its giving memory error if we return two
 	int getsSize();
 	~Asteroid();
 };
